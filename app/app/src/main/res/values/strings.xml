@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">VoiceAssistant</string>
+    <string name="start_rec">Say Something</string>
+    <string name="stop_rec">Recording…</string>
+</resources>
