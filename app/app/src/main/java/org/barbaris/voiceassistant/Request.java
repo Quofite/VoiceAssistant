@@ -1,5 +1,7 @@
 package org.barbaris.voiceassistant;
 
+import android.widget.TextView;
+
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.FileBody;
@@ -15,9 +17,11 @@ import java.net.URL;
 
 public class Request extends Thread {
     private String filePath = "";
+    private final TextView transcriptionBox;
 
-    public Request(String path) {
-        filePath = path;
+    public Request(String filePath, TextView transcriptionBox) {
+        this.filePath = filePath;
+        this.transcriptionBox = transcriptionBox;
     }
 
     @Override
@@ -33,8 +37,10 @@ public class Request extends Thread {
             HttpClient client = HttpClientBuilder.create().build();
             HttpResponse response = client.execute(request);
             String responseBody = new BasicHttpClientResponseHandler().handleResponse((ClassicHttpResponse) response);
-            System.out.println(responseBody);
-
+            responseBody = responseBody.replace("\"", "")
+                                        .replace("[", "")
+                                        .replace("]", "");
+            transcriptionBox.setText(responseBody);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

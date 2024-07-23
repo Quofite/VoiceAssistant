@@ -13,10 +13,14 @@ import android.widget.TextView;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.INTERNET;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
-    private TextView startRec;
+    private TextView startRecBox;
+    private TextView transcriptionBox;
     private MediaRecorder recorder;
+    private static String filePath = null;
     private static String fileName = null;
     private boolean isRecording = false;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
@@ -26,9 +30,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startRec = findViewById(R.id.startRecording);
+        startRecBox = findViewById(R.id.startRecording);
+        transcriptionBox = findViewById(R.id.transcription);
 
-        startRec.setOnClickListener(new View.OnClickListener() {
+        startRecBox.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View V) {
@@ -38,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
                     recorder.stop();
                     recorder.release();
                     recorder = null;
-                    startRec.setText(R.string.start_rec);
+                    startRecBox.setText(R.string.start_rec);
 
-                    Request request = new Request(getExternalFilesDir(null).getAbsolutePath() + "/record.ogg");
+                    Request request = new Request(filePath, transcriptionBox);
 
                     try {
                         request.start();
@@ -51,14 +56,14 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     if(hasPermissions()) {
-                        fileName = getExternalFilesDir(null).getAbsolutePath() + "/record.ogg";
-                        System.out.println(getExternalFilesDir(null).getAbsolutePath());
+                        fileName = "/" + randomPrefix() + "record.ogg";
+                        filePath = getExternalFilesDir(null).getAbsolutePath() + fileName;
 
                         recorder = new MediaRecorder();
                         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                         recorder.setOutputFormat(MediaRecorder.OutputFormat.OGG);
                         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.OPUS);
-                        recorder.setOutputFile(fileName);
+                        recorder.setOutputFile(filePath);
 
                         try {
                             recorder.prepare();
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
                         recorder.start();
                         isRecording = true;
-                        startRec.setText(R.string.stop_rec);
+                        startRecBox.setText(R.string.stop_rec);
                     } else {
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO,  INTERNET}, REQUEST_AUDIO_PERMISSION_CODE);
                     }
@@ -84,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
         return b == PackageManager.PERMISSION_GRANTED && c == PackageManager.PERMISSION_GRANTED;
     }
 
-
+    private int randomPrefix() {
+        Random random = new Random();
+        return random.nextInt(7000);
+    }
 
 
 

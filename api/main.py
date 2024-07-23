@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi import File, UploadFile
 from fastapi.responses import HTMLResponse
 
-import sys
+import os
 import requests
 
 app = FastAPI()
@@ -20,15 +20,13 @@ app = FastAPI()
 
     ---------------------------------------------------
 
-    TODO на 23.07: 
-    1) вызвать в upload_file() speech_to_text() и возвращать результат выполнения второй функции
-    2) в андроид-приложении указывать id для ГС, чтобы на сервере сообщения не перезаписывали друг друга
-    3) в андроид-приложении сделать вывод того, что сказаль пользователь
+    TODO на 24.07:
+    1) прикрутить нейросеть
 
 '''
 
 
-def speech_to_text():
+def speech_to_text(filepath):
     # получаем необходимые данные из других файлов
     certificate_path = "static/russiantrustedca.pem"
 
@@ -56,15 +54,15 @@ def speech_to_text():
         'Content-Type': 'audio/ogg;codecs=opus'
     }
 
-    with open(sys.argv[1], 'rb') as f:
+    with open(filepath, 'rb') as f:
         data = f.read()
 
     response = requests.post('https://smartspeech.sber.ru/rest/v1/speech:recognize', headers=headers, data=data, verify=certificate_path)
 
-    # вывод результата
-    print(response.status_code)
-    print(response.json()['result'])
+    return response.json()['result']
 
+
+# ------------------ HTTP HANDLERS
 
 @app.get("/")
 def read_root():
@@ -78,9 +76,12 @@ async def upload_file(file: UploadFile | None = None):
         return {"message": "no file"}
     
     else:
-        file_path = "./audios/" + file.filename
+        filepath = "./audios/" + file.filename
 
-        with open(file_path, 'wb') as f:
+        with open(filepath, 'wb') as f:
             f.write(file.file.read())
 
-        return {"filename": file.filename}
+        text = speech_to_text(filepath)
+        os.remove(filepath)
+
+        return text
