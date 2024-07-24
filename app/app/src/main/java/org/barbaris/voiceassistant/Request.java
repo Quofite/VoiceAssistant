@@ -39,7 +39,8 @@ public class Request extends Thread {
             String responseBody = new BasicHttpClientResponseHandler().handleResponse((ClassicHttpResponse) response);
             responseBody = responseBody.replace("\"", "")
                                         .replace("[", "")
-                                        .replace("]", "");
+                                        .replace("]", "")
+                                        .replace("\\n\\n", "\n\n");
             transcriptionBox.setText(responseBody);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
