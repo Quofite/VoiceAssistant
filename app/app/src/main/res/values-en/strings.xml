@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Voice Assistant</string>
+    <string name="start_rec">Ask something</string>
+    <string name="stop_rec">Talk...</string>
+    <string name="transcription">Your answer will be here</string>
+</resources>

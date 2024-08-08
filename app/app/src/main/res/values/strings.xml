@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">VoiceAssistant</string>
-    <string name="start_rec">Say Something</string>
-    <string name="stop_rec">Recording…</string>
-    <string name="transcription">Transcript will be here</string>
+    <string name="app_name" translatable="false">Voice Assistant</string>
+    <string name="start_rec">Скажите \n что-нибудь</string>
+    <string name="stop_rec">Говорите…</string>
+    <string name="transcription">Здесь будет Ваш ответ</string>
 </resources>
